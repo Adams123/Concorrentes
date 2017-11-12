@@ -14,56 +14,49 @@ int getFileSize(FILE *fp)
 	return count;
 }
 
-void printMatrix(int size, double matriz[size][size+1])
+void printMatrix(int size, double matriz[size][size*2])
 {
 	int i,j;
 	for(i=0;i<size;i++)
 		{
-			for(j=0;j<=size;j++)
+			for(j=0;j<size*2;j++)
 				printf("%.2lf ", matriz[i][j]);
 			printf("\n");
 		}
 }
 
+void printResultado(int size, double matriz[size][size*2])
+{
+	int j=size;
+	for(j;j<size*2;j++)
+	{
+		printf("%.2lf\n",matriz[j-size][j]);		
+	}
+}
+
 int main(int argc, char* argv[]) {
 
-	int npes, myrank, src, dest, msgtag, ret;
-	int required=MPI_THREAD_SERIALIZED;
-	int provided;
-	MPI_Status status;
-	MPI_Init_thread(&argc, &argv, required, &provided);
-	MPI_Comm_size(MPI_COMM_WORLD, &npes);
-	MPI_Comm_rank(MPI_COMM_WORLD, &myrank);
-
 	FILE *fp = fopen("matriz.txt","r+");
-	FILE *fp2 = fopen("vetor.txt","r+");
 
 	int count = getFileSize(fp);
 	rewind(fp);
-	double matriz[count][count+1];
+	double matriz[count][count*2];
 	int i=0,j=0;
 
 
 	for(i=0;i<count;i++)
 	{
 		for(j=0;j<count;j++)
-		{
 			fscanf(fp,"%lf",&matriz[i][j]);
-		}
-		fscanf(fp2,"%lf",&matriz[i][count]);
+		for(j;j<count*2;j++)
+			matriz[i][j]=0;
 	}
 
- 	MPI_Datatype col, coltype;
-
-	MPI_Type_vector(nrows,1, ncols, MPI_DOUBLE, &col);       
-
-	MPI_Type_commit(&col);
-	MPI_Type_create_resized(col, 0, 1*sizeof(double), &coltype);
-	MPI_Type_commit(&coltype);
-
+	for(j=count;j<count*2;j++)
+		matriz[j-count][j]=1;
 
 	int row=0;
-	for(i=0;i<count;i++)
+	for(i=0;i<1;i++)
 	{
 		int aii = matriz[i][i];
 		for(j=0;j<=count;j++)
@@ -72,14 +65,14 @@ int main(int argc, char* argv[]) {
 			if(row!=i)
 			{
 				double pivot = matriz[row][i];
-				for(j=i;j<=count;j++)
+				for(j=i;j<count*2;j++)
 					matriz[row][j]=matriz[row][j]-(pivot*(matriz[i][j]));
 			}
 	}
 
 	printMatrix(count, matriz);
 
-	MPI_Finalize();
+	printResultado(count, matriz);
 
 	return 0;
 }
