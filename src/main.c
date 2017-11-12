@@ -92,11 +92,15 @@ int main(int argc, char* argv[]) {
 		fscanf(fp2,"%lf",&matriz[i][j]);
 	}
 
-	printall(count, matriz);
 	int k;
 	double c;
+	int tid;
+	int nthreads;
+	#pragma omp parallel for num_threads(count) private(i,k,j)
 	for (j = 0; j < count; j++) {
-        for (i = 0; i < count; i++) {
+		// tid = omp_get_thread_num();
+		// printf("%d\n", tid);	
+		for (i = 0; i < count; i++) {
 						if (i == j) {
 							continue;
 						}
@@ -109,10 +113,11 @@ int main(int argc, char* argv[]) {
     }
 
     double x[count];
-    for (i = 0; i < count; i++) {
+    #pragma omp parallel for num_threads(count) private(i)
+    for (i = 0; i < count; i++) 
         x[i] = matriz[i][count] / matriz[i][i];
-        printf("\n x%d=%f",i,x[i]);
-    }
+    for(i=0;i<count;i++)
+    	printf("%f\n",x[i]);
 
 	return 0;
 }
