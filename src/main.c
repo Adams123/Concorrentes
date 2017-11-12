@@ -95,24 +95,27 @@ int main(int argc, char* argv[]) {
 	printall(count, matriz);
 	int k;
 	double c;
+
+	#pragma omp parallel for private(i, j, k) num_threads(25)
 	for (j = 0; j < count; j++) {
-        for (i = 0; i < count; i++) {
-						if (i == j) {
-							continue;
-						}
+		printf("%d ", omp_get_thread_num());
+	  for (i = 0; i < count; i++) {
+			if (i == j) {
+				continue;
+			}
 
-            c = matriz[i][j] / matriz[j][j];
-            for (k = 0; k < count + 1; k++) {
-                matriz[i][k] = matriz[i][k] - (c * matriz[j][k]);
-            }
-        }
-    }
+	    c = matriz[i][j] / matriz[j][j];
+	    for (k = 0; k < count + 1; k++) {
+	      matriz[i][k] = matriz[i][k] - (c * matriz[j][k]);
+	    }
+	  }
+	}
 
-    double x[count];
-    for (i = 0; i < count; i++) {
-        x[i] = matriz[i][count] / matriz[i][i];
-        printf("\n x%d=%f",i,x[i]);
-    }
+  double x[count];
+  for (i = 0; i < count; i++) {
+    x[i] = matriz[i][count] / matriz[i][i];
+    printf("\nx%d = %f",i,x[i]);
+  }
 
 	return 0;
 }
