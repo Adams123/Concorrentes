@@ -44,14 +44,14 @@ int main(int argc, char* argv[]) {
 		fscanf(fp2,"%f",&matriz[i][count]);
 	}
 	int row=0;
-	for(i=0;i<2;i++)
+	for(i=0;i<count;i++)
 	{
 		int aii = matriz[i][i];
 		for(j=0;j<=count;j++)
 		{
 			matriz[i][j]/=aii;
 		}
-		printf("New pivot %d\n", aii);
+		printf("New pivot %d: %d\n", i, aii);
 		printf("%f\n", matriz[j][i]);
 		for(row=0;row<count;row++)
 			if(row!=i)
