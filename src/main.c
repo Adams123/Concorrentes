@@ -14,56 +14,105 @@ int getFileSize(FILE *fp)
 	return count;
 }
 
+void printId(int size, double matriz[size][size+1])
+{
+	int i,j;
+	for(i=0;i<size;i++)
+	{
+		for(j=size+1;j<size*2;j++)
+			printf("%.2lf ", matriz[i][j]);
+		printf("\n");
+	}
+printf("\n");
+}
+
 void printMatrix(int size, double matriz[size][size+1])
 {
 	int i,j;
 	for(i=0;i<size;i++)
 		{
-			for(j=0;j<=size;j++)
+			for(j=0;j<size;j++)
 				printf("%.2lf ", matriz[i][j]);
 			printf("\n");
 		}
+		printf("\n");
 }
 
+void multM(int size, double matriz[size][size+1])
+{
+	double result[size][size];
+	int i,j,k;
+	for(i=0; i<size; ++i)
+        for(j=size; j<size*2; ++j)
+            for(k=0; k<size; ++k)
+            {
+                result[i][j-size]+=matriz[i][k]*matriz[k][j];
+            }
+    printMatrix(size, result);
+}
+
+void printResultado(int size, double matriz[size][size+1])
+{
+	int j=size+1;
+	for(j;j<size*2+1;j++)
+	{
+		printf("%.2lf\n",matriz[j-size-1][j]);		
+	}
+}
+
+
+void printall(int size, double matriz[size][size+1])
+{
+	int i,j;
+	for(i=0;i<size;i++)
+	{
+		for(j=0;j<size*2+1;j++)
+		{
+			printf("%.2lf ", matriz[i][j]);
+		}
+		printf("\n");
+	}
+}
 int main(int argc, char* argv[]) {
 
 	FILE *fp = fopen("matriz.txt","r+");
-	FILE *fp2 = fopen("vetor.txt","r+");
-
-    if (fp == NULL || fp2 == NULL) {
-        printf("Files not found\n");
-        return 1;
-    }
+	FILE *fp2 = fopen("vetor.txt", "r+");
 
 	int count = getFileSize(fp);
 	rewind(fp);
 	double matriz[count][count+1];
 	int i=0,j=0;
 
+
 	for(i=0;i<count;i++)
 	{
 		for(j=0;j<count;j++)
-		{
 			fscanf(fp,"%lf",&matriz[i][j]);
-		}
-		fscanf(fp2,"%lf",&matriz[i][count]);
+		fscanf(fp2,"%lf",&matriz[i][j]);
 	}
-	int row=0;
-	for(i=0;i<count;i++)
-	{
-		int aii = matriz[i][i];
-		for(j=0;j<=count;j++)
-			matriz[i][j]=matriz[i][j]/aii;
-		for(row=0;row<count;row++)
-			if(row!=i)
-			{
-				double el = matriz[row][i];
-				for(j=i;j<=count;j++)
-					matriz[row][j]=matriz[row][j]-(el*(matriz[i][j]));
-			}
-	}
-
-	printMatrix(count, matriz);
+	printall(count, matriz);
+	int k;
+	double c;
+	for(j=0; j<count; j++)
+    {
+        for(i=0; i<count; i++)
+        {
+            if(i!=j)
+            {
+                c=matriz[i][j]/matriz[j][j];
+                for(k=0; k<count+1; k++)
+                {
+                    matriz[i][k]=matriz[i][k]-c*matriz[j][k];
+                }
+            }
+        }
+    }
+    double x[count];
+    for(i=0; i<count; i++)
+    {
+        x[i]=matriz[i][count]/matriz[i][i];
+        printf("\n x%d=%f",i,x[i]);
+    }
 
 	return 0;
 }
