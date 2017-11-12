@@ -14,13 +14,13 @@ int getFileSize(FILE *fp)
 	return count;
 }
 
-void printMatrix(int size, float matriz[size][size+1])
+void printMatrix(int size, double matriz[size][size+1])
 {
 	int i,j;
 	for(i=0;i<size;i++)
 		{
 			for(j=0;j<=size;j++)
-				printf("%.2f ", matriz[i][j]);
+				printf("%.2lf ", matriz[i][j]);
 			printf("\n");
 		}
 }
@@ -30,32 +30,37 @@ int main(int argc, char* argv[]) {
 	FILE *fp = fopen("matriz.txt","r+");
 	FILE *fp2 = fopen("vetor.txt","r+");
 
+    if (fp == NULL || fp2 == NULL) {
+        printf("Files not found\n");
+        return 1;
+    }
+
 	int count = getFileSize(fp);
 	rewind(fp);
-	float matriz[count][count+1];
+	double matriz[count][count+1];
 	int i=0,j=0;
 
 	for(i=0;i<count;i++)
 	{
 		for(j=0;j<count;j++)
 		{
-			fscanf(fp,"%f",&matriz[i][j]);
+			fscanf(fp,"%lf",&matriz[i][j]);
 		}
-		fscanf(fp2,"%f",&matriz[i][count]);
+		fscanf(fp2,"%lf",&matriz[i][count]);
 	}
 	int row=0;
 	for(i=0;i<count;i++)
 	{
 		int aii = matriz[i][i];
 		for(j=0;j<=count;j++)
-		{
-			matriz[i][j]/=aii;
-		}
-		printf("New pivot %d: %d\n", i, aii);
-		printf("%f\n", matriz[j][i]);
+			matriz[i][j]=matriz[i][j]/aii;
 		for(row=0;row<count;row++)
 			if(row!=i)
-				matriz[row][j]=matriz[row][j]-(matriz[j][row]*(matriz[row][j]));
+			{
+				double el = matriz[row][i];
+				for(j=i;j<=count;j++)
+					matriz[row][j]=matriz[row][j]-(el*(matriz[i][j]));
+			}
 	}
 
 	printMatrix(count, matriz);

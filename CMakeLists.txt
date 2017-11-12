@@ -12,7 +12,7 @@ set(PRJ_MAIN_FILE "main.c")
 #libraries to link
 set(LINK_LIBS "-fopenmp")
 #define cflags
-set(CFLAGS "")
+set(CFLAGS "-g")
 #define header include directories as list
 set(INCLUDE_DIR )
 
