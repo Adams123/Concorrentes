@@ -94,30 +94,28 @@ int main(int argc, char* argv[]) {
 
 	int k;
 	double c;
-	int tid;
-	int nthreads;
-	#pragma omp parallel for num_threads(count) private(i,k,j)
+
+	#pragma omp parallel for private(i, j, k) num_threads(25)
 	for (j = 0; j < count; j++) {
-		// tid = omp_get_thread_num();
-		// printf("%d\n", tid);	
-		for (i = 0; i < count; i++) {
-						if (i == j) {
-							continue;
-						}
+		//printf("%d ", omp_get_thread_num());
+	  for (i = 0; i < count; i++) {
+			if (i == j) {
+				continue;
+			}
 
-            c = matriz[i][j] / matriz[j][j];
-            for (k = 0; k < count + 1; k++) {
-                matriz[i][k] = matriz[i][k] - (c * matriz[j][k]);
-            }
-        }
-    }
+	    c = matriz[i][j] / matriz[j][j];
+	    for (k = 0; k < count + 1; k++) {
+	      matriz[i][k] = matriz[i][k] - (c * matriz[j][k]);
+	    }
+	  }
+	}
 
-    double x[count];
-    #pragma omp parallel for num_threads(count) private(i)
-    for (i = 0; i < count; i++) 
-        x[i] = matriz[i][count] / matriz[i][i];
-    for(i=0;i<count;i++)
-    	printf("%f\n",x[i]);
+	double x[count];
+	for (i = 0; i < count; i++) 
+		x[i] = matriz[i][count] / matriz[i][i];
+	for (i=0;i<count;i++)
+		printf("%f\n",x[i]);
+
 
 	return 0;
 }

@@ -18,7 +18,6 @@ foreach(filename ${SOURCES})
 	endif("${filename}" MATCHES "main.c")
 
 endforeach(filename ${SOURCES})
-
 if(${PRJ_TYPE_EXECUTABLE})
 	#create executable if the project type is PRJ_TYPE_EXECUTABLE
 	add_executable(${PRJ_NAME} ${SOURCES})
@@ -43,4 +42,10 @@ endif()
 if(MPI_LINK_FLAGS)
     set_target_properties(${PRJ_NAME} PROPERTIES
     LINK_FLAGS "${MPI_LINK_FLAGS}")
+endif()
+
+find_package(OpenMP)
+if (OPENMP_FOUND)
+    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
 endif()
