@@ -56,7 +56,7 @@ void printResultado(int size, double matriz[size][size+1])
 	int j=size+1;
 	for(j;j<size*2+1;j++)
 	{
-		printf("%.2lf\n",matriz[j-size-1][j]);		
+		printf("%.2lf\n",matriz[j-size-1][j]);
 	}
 }
 
@@ -84,33 +84,33 @@ int main(int argc, char* argv[]) {
 	int i=0,j=0;
 
 
-	for(i=0;i<count;i++)
-	{
-		for(j=0;j<count;j++)
+	for (i = 0; i < count; i++) {
+		for (j = 0; j < count; j++) {
 			fscanf(fp,"%lf",&matriz[i][j]);
+		}
+
 		fscanf(fp2,"%lf",&matriz[i][j]);
 	}
+
 	printall(count, matriz);
 	int k;
 	double c;
-	for(j=0; j<count; j++)
-    {
-        for(i=0; i<count; i++)
-        {
-            if(i!=j)
-            {
-                c=matriz[i][j]/matriz[j][j];
-                for(k=0; k<count+1; k++)
-                {
-                    matriz[i][k]=matriz[i][k]-c*matriz[j][k];
-                }
+	for (j = 0; j < count; j++) {
+        for (i = 0; i < count; i++) {
+						if (i == j) {
+							continue;
+						}
+
+            c = matriz[i][j] / matriz[j][j];
+            for (k = 0; k < count + 1; k++) {
+                matriz[i][k] = matriz[i][k] - (c * matriz[j][k]);
             }
         }
     }
+
     double x[count];
-    for(i=0; i<count; i++)
-    {
-        x[i]=matriz[i][count]/matriz[i][i];
+    for (i = 0; i < count; i++) {
+        x[i] = matriz[i][count] / matriz[i][i];
         printf("\n x%d=%f",i,x[i]);
     }
 
