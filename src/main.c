@@ -3,83 +3,54 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define MAX_SIZE 10000
-
-int getFileSize(FILE *fp)
+int getFileSize(FILE *fp, int size)
 {
-	char buf[MAX_SIZE];
+	rewind(fp);
+	char buf[size*size];
 	int count=0;
 	while(fgets(buf,sizeof(buf),fp) != NULL)
 	  count++;
+	rewind(fp);
 	return count;
 }
-
-void printId(int size, double matriz[size][size+1])
-{
-	int i,j;
-	for(i=0;i<size;i++)
-	{
-		for(j=size+1;j<size*2;j++)
-			printf("%.2lf ", matriz[i][j]);
-		printf("\n");
-	}
-printf("\n");
-}
-
-void printMatrix(int size, double matriz[size][size+1])
-{
-	int i,j;
-	for(i=0;i<size;i++)
-		{
-			for(j=0;j<size;j++)
-				printf("%.2lf ", matriz[i][j]);
-			printf("\n");
-		}
-		printf("\n");
-}
-
-void multM(int size, double matriz[size][size+1])
-{
-	double result[size][size];
-	int i,j,k;
-	for(i=0; i<size; ++i)
-        for(j=size; j<size*2; ++j)
-            for(k=0; k<size; ++k)
-            {
-                result[i][j-size]+=matriz[i][k]*matriz[k][j];
-            }
-    printMatrix(size, result);
-}
-
-void printResultado(int size, double matriz[size][size+1])
-{
-	int j=size+1;
-	for(j;j<size*2+1;j++)
-	{
-		printf("%.2lf\n",matriz[j-size-1][j]);
-	}
-}
-
 
 void printall(int size, double matriz[size][size+1])
 {
 	int i,j;
 	for(i=0;i<size;i++)
 	{
-		for(j=0;j<size*2+1;j++)
+		for(j=0;j<size+1;j++)
 		{
 			printf("%.2lf ", matriz[i][j]);
 		}
 		printf("\n");
 	}
 }
+
+void randomMatriz(FILE *fp, FILE *fp2, int size)
+{
+	int i,j;
+	for(i=0;i<size;i++)
+	{
+		for(j=0;j<size-1;j++)
+		{
+			fprintf(fp,"%d ", (rand()%1000)+1);
+		}
+		fprintf(fp,"%d\n", (rand()%1000)+1);
+		fprintf(fp2,"%d\n", (rand()%1000)+1);
+	}
+	rewind(fp);
+	rewind(fp2);
+}
+
 int main(int argc, char* argv[]) {
 
-	FILE *fp = fopen("matriz.txt","r+");
-	FILE *fp2 = fopen("vetor.txt", "r+");
-
-	int count = getFileSize(fp);
-	rewind(fp);
+	FILE *fp = fopen("matriz.txt","w+");
+	FILE *fp2 = fopen("vetor.txt", "w+");
+	FILE *fp3 = fopen("resultado.txt", "w+");
+	int count;
+	sscanf(argv[1],"%d",&count);
+	randomMatriz(fp, fp2, count);
 	double matriz[count][count+1];
 	int i=0,j=0;
 
@@ -88,31 +59,35 @@ int main(int argc, char* argv[]) {
 		for (j = 0; j < count; j++) {
 			fscanf(fp,"%lf",&matriz[i][j]);
 		}
-
 		fscanf(fp2,"%lf",&matriz[i][j]);
 	}
+	//printall(count, matriz);
+	int teste;
 
-	printall(count, matriz);
 	int k;
 	double c;
 	for (j = 0; j < count; j++) {
         for (i = 0; i < count; i++) {
-						if (i == j) {
-							continue;
-						}
-
-            c = matriz[i][j] / matriz[j][j];
+			if (i == j) {
+				continue;
+			}
+			c = matriz[i][j] / matriz[j][j];
             for (k = 0; k < count + 1; k++) {
                 matriz[i][k] = matriz[i][k] - (c * matriz[j][k]);
             }
         }
+        //printall(count, matriz);
     }
-
     double x[count];
     for (i = 0; i < count; i++) {
         x[i] = matriz[i][count] / matriz[i][i];
-        printf("\n x%d=%f",i,x[i]);
+        fprintf(fp3,"%.2lf\n",x[i]);
+        //printf("%.2lf\n",x[i]);
     }
+
+    fclose(fp);
+    fclose(fp2);
+    fclose(fp3);
 
 	return 0;
 }
