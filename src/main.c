@@ -43,18 +43,36 @@ void randomMatriz(FILE *fp, FILE *fp2, int size)
 	rewind(fp2);
 }
 
+double **doublealloc2d(int n, int m) {
+    double *data = (double *)malloc(n*m*sizeof(double));
+    double **array = (double **)malloc(n*sizeof(double *));
+    int i;
+    for (i=0; i<n; i++)
+        array[i] = &(data[i*m]);
+
+    return array;
+}
+
+void floatfree2d(double **array) {
+    free(array[0]);
+    free(array);
+}
+
 int main(int argc, char* argv[]) {
 
 	FILE *fp = fopen("matriz.txt","w+");
 	FILE *fp2 = fopen("vetor.txt", "w+");
 	FILE *fp3 = fopen("resultado.txt", "w+");
+	int teste;
 	int count;
 	sscanf(argv[1],"%d",&count);
 	randomMatriz(fp, fp2, count);
-	double matriz[count][count+1];
+	double **matriz;
+	matriz = doublealloc2d(count,count);
 	int i=0,j=0;
 
-
+	
+	
 	for (i = 0; i < count; i++) {
 		for (j = 0; j < count; j++) {
 			fscanf(fp,"%lf",&matriz[i][j]);
@@ -62,7 +80,6 @@ int main(int argc, char* argv[]) {
 		fscanf(fp2,"%lf",&matriz[i][j]);
 	}
 	//printall(count, matriz);
-	int teste;
 
 	int k;
 	double c;
@@ -88,6 +105,6 @@ int main(int argc, char* argv[]) {
     fclose(fp);
     fclose(fp2);
     fclose(fp3);
-
+    floatfree2d(matriz);
 	return 0;
 }
